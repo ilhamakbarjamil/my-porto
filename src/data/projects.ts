@@ -1,97 +1,97 @@
 export type Project = {
   title: string;
-  category: "Data Science" | "Web Development";
+  category: "Sains Data" | "Pengembangan Web";
   description: string;
   techStack: string[];
   githubUrl: string;
   liveUrl?: string;
-  status: "Completed" | "In Progress" | "Research";
+  status: "Selesai" | "Dalam Proses" | "Riset";
   highlights: string[];
 };
 
 export const featuredProjects: Project[] = [
   {
-    title: "Football Event Classification using DistilBERT",
-    category: "Data Science",
+    title: "Klasifikasi Event Sepak Bola dengan DistilBERT",
+    category: "Sains Data",
     description:
-      "NLP project for classifying football match commentary into event categories using transformer-based fine-tuning.",
+      "Proyek NLP untuk mengklasifikasikan komentar pertandingan sepak bola ke dalam kategori event menggunakan fine-tuning berbasis transformer.",
     techStack: ["Python", "DistilBERT", "Hugging Face", "NLP", "Pandas"],
     githubUrl: "https://github.com/",
-    status: "Research",
+    status: "Riset",
     highlights: [
-      "Transformer-based text classification",
-      "Football commentary dataset",
-      "Evaluation using accuracy, precision, recall, and F1-score",
+      "Klasifikasi teks berbasis transformer",
+      "Dataset komentar sepak bola",
+      "Evaluasi menggunakan accuracy, precision, recall, dan F1-score",
     ],
   },
   {
-    title: "Case-Based Reasoning Legal Decision Retrieval",
-    category: "Data Science",
+    title: "Pencarian Putusan Hukum dengan Case-Based Reasoning",
+    category: "Sains Data",
     description:
-      "A retrieval system using TF-IDF and cosine similarity to find similar legal decision cases.",
+      "Sistem pencarian menggunakan TF-IDF dan cosine similarity untuk menemukan kasus putusan hukum yang serupa.",
     techStack: ["Python", "TF-IDF", "Cosine Similarity", "Scikit-learn"],
     githubUrl: "https://github.com/",
-    status: "Completed",
+    status: "Selesai",
     highlights: [
-      "Case representation",
-      "Similarity-based retrieval",
-      "Top-K recommendation",
+      "Representasi kasus",
+      "Pencarian berbasis kemiripan",
+      "Rekomendasi Top-K",
     ],
   },
   {
-    title: "Agricultural Yield Classification",
-    category: "Data Science",
+    title: "Klasifikasi Hasil Pertanian",
+    category: "Sains Data",
     description:
-      "Machine learning classification project for agricultural yield prediction using structured tabular data.",
+      "Proyek klasifikasi machine learning untuk memprediksi hasil pertanian menggunakan data tabular terstruktur.",
     techStack: ["Python", "Scikit-learn", "Random Forest", "Data Mining"],
     githubUrl: "https://github.com/",
-    status: "Completed",
+    status: "Selesai",
     highlights: [
-      "Data preprocessing",
-      "Classification modeling",
-      "Model evaluation and visualization",
+      "Prapemrosesan data",
+      "Pemodelan klasifikasi",
+      "Evaluasi dan visualisasi model",
     ],
   },
   {
-    title: "Data Mining Classification Dashboard",
-    category: "Web Development",
+    title: "Dashboard Klasifikasi Data Mining",
+    category: "Pengembangan Web",
     description:
-      "Interactive dashboard for presenting machine learning classification results and visual analytics.",
+      "Dashboard interaktif untuk menampilkan hasil klasifikasi machine learning dan analitik visual.",
     techStack: ["Streamlit", "Python", "Plotly", "Pandas"],
     githubUrl: "https://github.com/",
-    status: "Completed",
+    status: "Selesai",
     highlights: [
-      "Interactive visualization",
-      "Single and batch prediction",
-      "Clean dashboard layout",
+      "Visualisasi interaktif",
+      "Prediksi tunggal dan batch",
+      "Tata letak dashboard yang rapi",
     ],
   },
   {
-    title: "Modern Company Profile Website",
-    category: "Web Development",
+    title: "Website Company Profile Modern",
+    category: "Pengembangan Web",
     description:
-      "A responsive company profile website with clean layout, structured sections, and modern UI components.",
+      "Website company profile responsif dengan layout rapi, bagian yang terstruktur, dan komponen UI modern.",
     techStack: ["Next.js", "React", "Tailwind CSS", "Vercel"],
     githubUrl: "https://github.com/",
-    status: "Completed",
+    status: "Selesai",
     highlights: [
-      "Responsive landing page",
-      "Professional UI structure",
-      "Deployment-ready architecture",
+      "Landing page responsif",
+      "Struktur UI profesional",
+      "Arsitektur siap deploy",
     ],
   },
   {
-    title: "Personal Portfolio Website",
-    category: "Web Development",
+    title: "Website Portofolio Pribadi",
+    category: "Pengembangan Web",
     description:
-      "Minimalist portfolio website inspired by Apple-style interface, focused on Data Science and Web Development works.",
+      "Website portofolio minimalis terinspirasi antarmuka bergaya Apple, berfokus pada karya Sains Data dan Pengembangan Web.",
     techStack: ["Next.js", "TypeScript", "Tailwind CSS", "Motion"],
     githubUrl: "https://github.com/",
-    status: "In Progress",
+    status: "Dalam Proses",
     highlights: [
-      "Apple-like minimalist design",
-      "GitHub repository integration",
-      "Smooth animation and responsive layout",
+      "Desain minimalis bergaya Apple",
+      "Integrasi repositori GitHub",
+      "Animasi halus dan layout responsif",
     ],
   },
 ];

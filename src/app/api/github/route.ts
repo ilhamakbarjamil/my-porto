@@ -17,7 +17,7 @@ export async function GET() {
 
   if (!username) {
     return NextResponse.json(
-      { message: "GITHUB_USERNAME is not configured", repos: [] },
+      { message: "GITHUB_USERNAME belum dikonfigurasi", repos: [] },
       { status: 200 }
     );
   }
@@ -37,7 +37,7 @@ export async function GET() {
 
     if (!response.ok) {
       return NextResponse.json(
-        { message: "Failed to fetch GitHub repositories", repos: [] },
+        { message: "Gagal mengambil repositori GitHub", repos: [] },
         { status: 200 }
       );
     }
@@ -61,7 +61,7 @@ export async function GET() {
     return NextResponse.json({ repos });
   } catch {
     return NextResponse.json(
-      { message: "Unexpected error while fetching repositories", repos: [] },
+      { message: "Terjadi kesalahan saat mengambil repositori", repos: [] },
       { status: 200 }
     );
   }

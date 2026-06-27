@@ -2,9 +2,9 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Ilham Akbar Jamil — Data Science & Web Developer",
+  title: "Ilham Akbar Jamil — Sains Data & Pengembang Web",
   description:
-    "Professional portfolio of Ilham Akbar Jamil, focused on Data Science, Machine Learning, NLP, and Web Development.",
+    "Portofolio profesional Ilham Akbar Jamil, berfokus pada Sains Data, Machine Learning, NLP, dan Pengembangan Web.",
 };
 
 export default function RootLayout({
@@ -13,7 +13,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="id">
       <body>{children}</body>
     </html>
   );
