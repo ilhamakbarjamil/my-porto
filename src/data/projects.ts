@@ -84,12 +84,12 @@ export const featuredProjects: Project[] = [
     title: "Website Portofolio Pribadi",
     category: "Pengembangan Web",
     description:
-      "Website portofolio minimalis terinspirasi antarmuka bergaya Apple, berfokus pada karya Sains Data dan Pengembangan Web.",
+      "Website portofolio dengan pendekatan editorial yang hangat, menampilkan karya Sains Data dan Pengembangan Web secara terstruktur.",
     techStack: ["Next.js", "TypeScript", "Tailwind CSS", "Motion"],
     githubUrl: "https://github.com/",
     status: "Dalam Proses",
     highlights: [
-      "Desain minimalis bergaya Apple",
+      "Desain editorial dengan ilustrasi geometris",
       "Integrasi repositori GitHub",
       "Animasi halus dan layout responsif",
     ],

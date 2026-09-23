@@ -1,621 +1,121 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { motion } from "motion/react";
-import {
-  ArrowUpRight,
-  Mail,
-  Code2,
-  Database,
-  Brain,
-  ExternalLink,
-  Star,
-  GitFork,
-  CalendarDays,
-  Sun,
-  Moon,
-} from "lucide-react";
+import { ArrowDown, ArrowRight, ArrowUpRight, ArrowUp, Mail, Code2, Database, Brain, Star, GitFork, Menu, X, Plus, FolderGit2 } from "lucide-react";
 import { featuredProjects } from "@/data/projects";
+import { HeroArt, ProjectArt } from "./PortfolioArt";
 
-type Theme = "dark" | "light";
-
-type Repo = {
-  id: number;
-  name: string;
-  description: string | null;
-  url: string;
-  language: string | null;
-  stars: number;
-  forks: number;
-  updatedAt: string;
-};
-
-const skills = {
-  "Sains Data": [
-    "Python",
-    "Pandas",
-    "NumPy",
-    "Scikit-learn",
-    "Machine Learning",
-    "NLP",
-    "Visualisasi Data",
-  ],
-  "Pengembangan Web": [
-    "HTML",
-    "CSS",
-    "JavaScript",
-    "TypeScript",
-    "React",
-    "Next.js",
-    "Tailwind CSS",
-  ],
-  Alat: ["GitHub", "Vercel", "Google Colab", "Jupyter Notebook", "VS Code"],
-};
-
-function formatDate(date: string) {
-  return new Intl.DateTimeFormat("id-ID", {
-    month: "short",
-    day: "numeric",
-    year: "numeric",
-  }).format(new Date(date));
+type Repo = { id: number; name: string; description: string | null; url: string; language: string | null; stars: number; forks: number; updatedAt: string };
+const categories = ["Semua", "Sains Data", "Pengembangan Web"] as const;
+const navigation = [["Tentang", "about"], ["Proyek", "projects"], ["Keahlian", "skills"], ["GitHub", "github"]];
+const skills = [
+  { title: "Sains Data", subtitle: "Menemukan cerita di balik angka.", icon: Database, items: ["Python", "Pandas", "NumPy", "Scikit-learn", "Machine Learning", "NLP", "Visualisasi Data"] },
+  { title: "Pengembangan Web", subtitle: "Membawa ide menjadi pengalaman.", icon: Code2, items: ["HTML", "CSS", "JavaScript", "TypeScript", "React", "Next.js", "Tailwind CSS"] },
+  { title: "Alat & Alur Kerja", subtitle: "Proses yang rapi, hasil yang terarah.", icon: Brain, items: ["GitHub", "Vercel", "Google Colab", "Jupyter Notebook", "VS Code"] },
+];
+function SectionLabel({ number, children }: { number: string; children: React.ReactNode }) {
+  return <div className="section-label"><span>{number}</span><span>{children}</span></div>;
 }
-
-function getThemeClasses(theme: Theme) {
-  const isDark = theme === "dark";
-
-  return {
-    page: isDark
-      ? "bg-black text-white"
-      : "bg-[#f5f5f7] text-[#111111]",
-
-    glow: isDark
-      ? "bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.12),transparent_35%),radial-gradient(circle_at_bottom_right,rgba(255,255,255,0.08),transparent_30%)]"
-      : "bg-[radial-gradient(circle_at_top,rgba(0,0,0,0.10),transparent_35%),radial-gradient(circle_at_bottom_right,rgba(0,0,0,0.06),transparent_30%)]",
-
-    nav: isDark
-      ? "border-white/10 bg-black/60"
-      : "border-black/10 bg-[#f5f5f7]/75",
-
-    textMuted: isDark ? "text-white/60" : "text-black/60",
-    textSoft: isDark ? "text-white/50" : "text-black/50",
-    textVerySoft: isDark ? "text-white/35" : "text-black/35",
-
-    border: isDark ? "border-white/10" : "border-black/10",
-
-    panel: isDark
-      ? "border-white/10 bg-white/[0.035]"
-      : "border-black/10 bg-white/80 shadow-sm shadow-black/5",
-
-    panelHover: isDark
-      ? "hover:border-white/25 hover:bg-white/[0.055]"
-      : "hover:border-black/20 hover:bg-white",
-
-    softPanel: isDark
-      ? "border-white/10 bg-white/[0.04]"
-      : "border-black/10 bg-white/75 shadow-sm shadow-black/5",
-
-    softChip: isDark
-      ? "border-white/10 bg-white/[0.04] text-white/60"
-      : "border-black/10 bg-white/80 text-black/60",
-
-    tinyChip: isDark
-      ? "border-white/10 text-white/55"
-      : "border-black/10 text-black/55",
-
-    statusChip: isDark
-      ? "bg-white text-black"
-      : "bg-black text-white",
-
-    skillChip: isDark
-      ? "bg-white/[0.06] text-white/60"
-      : "bg-black/[0.05] text-black/60",
-
-    primaryButton: isDark
-      ? "bg-white text-black hover:bg-white/85"
-      : "bg-black text-white hover:bg-black/85",
-
-    secondaryButton: isDark
-      ? "border-white/15 text-white/80 hover:border-white/30 hover:bg-white/[0.06]"
-      : "border-black/15 text-black/80 hover:border-black/30 hover:bg-black/[0.04]",
-
-    navButton: isDark
-      ? "border-white/15 text-white/80 hover:border-white/30 hover:bg-white hover:text-black"
-      : "border-black/15 text-black/80 hover:border-black/30 hover:bg-black hover:text-white",
-
-    footer: isDark ? "border-white/10 text-white/35" : "border-black/10 text-black/35",
-
-    deviceOuter: isDark
-      ? "border-white/10 bg-white/[0.04] shadow-white/5"
-      : "border-black/10 bg-white/80 shadow-black/10",
-
-    deviceInner: isDark
-      ? "border-white/10 bg-black/80"
-      : "border-black/10 bg-[#f5f5f7]",
-
-    dot1: isDark ? "bg-white/25" : "bg-black/25",
-    dot2: isDark ? "bg-white/15" : "bg-black/15",
-    dot3: isDark ? "bg-white/10" : "bg-black/10",
-  };
-}
-
-function SectionLabel({
-  children,
-  theme,
-}: {
-  children: React.ReactNode;
-  theme: Theme;
-}) {
-  const ui = getThemeClasses(theme);
-
-  return (
-    <div
-      className={`mb-5 inline-flex rounded-full border px-4 py-2 text-xs font-medium uppercase tracking-[0.25em] ${ui.softChip}`}
-    >
-      {children}
-    </div>
-  );
+function formatDate(value: string) {
+  const date = new Date(value);
+  return Number.isNaN(date.getTime()) ? "—" : new Intl.DateTimeFormat("id-ID", { day: "numeric", month: "short", year: "numeric" }).format(date);
 }
 
 export default function PortfolioPage() {
-  const [theme, setTheme] = useState<Theme>("dark");
-  const [isMounted, setIsMounted] = useState(false);
+  const [filter, setFilter] = useState<(typeof categories)[number]>("Semua");
+  const [menuOpen, setMenuOpen] = useState(false);
   const [repos, setRepos] = useState<Repo[]>([]);
-  const [isLoadingRepos, setIsLoadingRepos] = useState(true);
-
-  const ui = getThemeClasses(theme);
-
-  useEffect(() => {
-    const savedTheme = localStorage.getItem("portfolio-theme") as Theme | null;
-    const systemPrefersDark = window.matchMedia(
-      "(prefers-color-scheme: dark)"
-    ).matches;
-
-    const nextTheme =
-      savedTheme === "dark" || savedTheme === "light"
-        ? savedTheme
-        : systemPrefersDark
-          ? "dark"
-          : "light";
-
-    const frameId = window.requestAnimationFrame(() => {
-      setTheme(nextTheme);
-      setIsMounted(true);
-    });
-
-    return () => window.cancelAnimationFrame(frameId);
-  }, []);
+  const [repoState, setRepoState] = useState<"loading" | "ready" | "error">("loading");
+  const [retry, setRetry] = useState(0);
+  const [activeSection, setActiveSection] = useState("home");
 
   useEffect(() => {
-    if (!isMounted) return;
-
-    document.documentElement.dataset.theme = theme;
-    localStorage.setItem("portfolio-theme", theme);
-  }, [theme, isMounted]);
-
-  useEffect(() => {
+    const controller = new AbortController();
     async function loadRepos() {
       try {
-        const response = await fetch("/api/github");
+        const response = await fetch("/api/github", { signal: controller.signal });
+        if (!response.ok) throw new Error("GitHub unavailable");
         const data = await response.json();
-        setRepos(data.repos || []);
+        if (!Array.isArray(data.repos)) throw new Error("Invalid repositories");
+        setRepos(data.repos);
+        setRepoState(data.message && data.repos.length === 0 ? "error" : "ready");
       } catch {
-        setRepos([]);
-      } finally {
-        setIsLoadingRepos(false);
+        if (!controller.signal.aborted) setRepoState("error");
       }
     }
-
     loadRepos();
+    return () => controller.abort();
+  }, [retry]);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => { if (entry.isIntersecting) setActiveSection(entry.target.id); });
+    }, { rootMargin: "-15% 0px -60% 0px" });
+    document.querySelectorAll("main section[id]").forEach((section) => observer.observe(section));
+    return () => observer.disconnect();
   }, []);
 
-  function toggleTheme() {
-    setTheme((current) => (current === "dark" ? "light" : "dark"));
-  }
+  useEffect(() => {
+    if (!menuOpen) return;
+    function closeOnEscape(event: KeyboardEvent) {
+      if (event.key === "Escape") {
+        setMenuOpen(false);
+        document.getElementById("menu-toggle")?.focus();
+      }
+    }
+    window.addEventListener("keydown", closeOnEscape);
+    return () => window.removeEventListener("keydown", closeOnEscape);
+  }, [menuOpen]);
+
+  const visibleProjects = featuredProjects.map((project, index) => ({ ...project, index })).filter((project) => filter === "Semua" || project.category === filter);
 
   return (
-    <main className={`min-h-screen transition-colors duration-500 ${ui.page}`}>
-      <div className={`pointer-events-none fixed inset-0 z-0 ${ui.glow}`} />
+    <>
+      <a className="skip-link" href="#main-content">Langsung ke konten</a>
+      <header className="site-header">
+        <div className="container nav-inner">
+          <a className="wordmark" href="#home" aria-label="Ilham, beranda" onClick={() => setMenuOpen(false)}>ilham<span>✳</span></a>
+          <nav className="desktop-nav" aria-label="Navigasi utama">{navigation.map(([label, id]) => <a key={id} href={`#${id}`} aria-current={activeSection === id ? "location" : undefined}>{label}</a>)}</nav>
+          <div className="nav-actions"><a className="nav-contact" href="#contact" onClick={() => setMenuOpen(false)}>Mari bicara <ArrowUpRight size={16} /></a><button id="menu-toggle" className="menu-toggle" aria-label={menuOpen ? "Tutup menu" : "Buka menu"} aria-expanded={menuOpen} aria-controls="mobile-navigation" onClick={() => setMenuOpen(!menuOpen)}>{menuOpen ? <X size={22} /> : <Menu size={22} />}</button></div>
+        </div>
+        <nav id="mobile-navigation" className="mobile-nav" aria-label="Navigasi seluler" hidden={!menuOpen}>{navigation.map(([label, id]) => <a key={id} href={`#${id}`} onClick={() => setMenuOpen(false)}>{label}<ArrowUpRight size={16} /></a>)}</nav>
+      </header>
 
-      <nav
-        className={`fixed left-0 right-0 top-0 z-50 border-b backdrop-blur-2xl transition-colors duration-500 ${ui.nav}`}
-      >
-        <div className="mx-auto flex max-w-7xl items-center justify-between px-5 py-4 md:px-8">
-          <a href="#home" className="text-sm font-semibold tracking-tight">
-            Ilham.
-          </a>
-
-          <div className={`hidden items-center gap-7 text-sm md:flex ${ui.textMuted}`}>
-            <a className="transition hover:opacity-100" href="#about">
-              Tentang
-            </a>
-            <a className="transition hover:opacity-100" href="#projects">
-              Proyek
-            </a>
-            <a className="transition hover:opacity-100" href="#github">
-              GitHub
-            </a>
-            <a className="transition hover:opacity-100" href="#skills">
-              Keahlian
-            </a>
-            <a className="transition hover:opacity-100" href="#contact">
-              Kontak
-            </a>
+      <main id="main-content">
+        <section id="home" className="container hero">
+          <div className="hero-copy">
+            <div className="eyebrow"><span className="status-dot" /> HALO, SAYA ILHAM AKBAR JAMIL</div>
+            <h1>Data bertemu<br /><em>kreativitas.</em><span className="title-spark" aria-hidden="true">✳</span></h1>
+            <p className="hero-description">Mengubah data menjadi insight, dan ide menjadi pengalaman digital yang bermakna.</p>
+            <p className="hero-specialties">Sains Data <span>·</span> Machine Learning <span>·</span> Pengembangan Web</p>
+            <div className="hero-actions"><a className="button button-primary" href="#projects">Jelajahi karya <ArrowUpRight size={19} /></a><a className="text-link" href="#about">Kenal lebih dekat <ArrowRight size={17} /></a></div>
+            <div className="hero-availability"><span className="availability-dot" /> Terbuka untuk ide & kolaborasi baru</div>
           </div>
+          <HeroArt />
+          <div className="hero-footer"><span>LOGIKA YANG TERSTRUKTUR. SENTUHAN YANG PERSONAL.</span><a href="#projects">Gulir untuk menjelajah <ArrowDown size={15} /></a></div>
+        </section>
 
-          <div className="flex items-center gap-2">
-            <button
-              onClick={toggleTheme}
-              className={`inline-flex items-center gap-2 rounded-full border px-4 py-2 text-xs font-medium transition ${ui.secondaryButton}`}
-              aria-label="Ganti tema"
-            >
-              {theme === "dark" ? <Sun size={15} /> : <Moon size={15} />}
-              <span className="hidden sm:inline">
-                {theme === "dark" ? "Terang" : "Gelap"}
-              </span>
-            </button>
+        <div className="discipline-strip" aria-hidden="true"><div className="container"><span>Data Science</span><span>✳</span><span>Machine Learning</span><span>✳</span><span>Web Development</span><span>✳</span><span>Creative Thinking</span></div></div>
 
-            <a
-              href="#contact"
-              className={`rounded-full border px-4 py-2 text-xs font-medium transition ${ui.navButton}`}
-            >
-              Mari Bicara
-            </a>
-          </div>
-        </div>
-      </nav>
+        <section id="projects" className="container section projects-section">
+          <SectionLabel number="01">KARYA PILIHAN</SectionLabel>
+          <div className="section-heading"><h2>Eksplorasi menjadi<br /><em>solusi nyata.</em></h2><p>Setiap proyek adalah ruang untuk bertanya,<br className="desktop-break" /> mencoba, dan menemukan pendekatan baru.</p></div>
+          <div className="project-toolbar"><div className="project-filters" role="group" aria-label="Filter kategori proyek">{categories.map((category) => <button key={category} type="button" aria-pressed={filter === category} onClick={() => setFilter(category)}>{category}<span>{category === "Semua" ? featuredProjects.length : featuredProjects.filter((project) => project.category === category).length}</span></button>)}</div><span className="project-count" role="status">{String(visibleProjects.length).padStart(2, "0")} proyek ditampilkan</span></div>
+          <div className="project-grid">{visibleProjects.map((project) => <article className="project-card" key={project.title}>
+            <ProjectArt index={project.index} />
+            <div className="project-info"><div className="project-meta"><span>{project.category}</span><span className={`project-status status-${project.status === "Selesai" ? "done" : "progress"}`}><i />{project.status}</span></div><h3>{project.title}</h3><p>{project.description}</p><div className="tech-tags">{project.techStack.map((tech) => <span key={tech}>{tech}</span>)}</div><div className="project-bottom"><details><summary>Di balik proyek <Plus size={15} /></summary><ul>{project.highlights.map((highlight) => <li key={highlight}>{highlight}</li>)}</ul></details><div className="project-links"><a href={project.githubUrl} target="_blank" rel="noreferrer" aria-label={`GitHub: ${project.title}`}><FolderGit2 size={16} /><span>Kode</span><ArrowUpRight size={14} /></a>{project.liveUrl && <a href={project.liveUrl} target="_blank" rel="noreferrer">Demo <ArrowUpRight size={14} /></a>}</div></div></div>
+          </article>)}</div>
+        </section>
 
-      <section
-        id="home"
-        className="relative z-10 mx-auto flex min-h-screen max-w-7xl items-center px-5 py-28 md:px-8"
-      >
-        <div className="grid w-full items-center gap-12 lg:grid-cols-[1.1fr_0.9fr]">
-          <motion.div
-            initial={{ opacity: 0, y: 24 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-          >
-            <div
-              className={`mb-6 inline-flex rounded-full border px-4 py-2 text-sm ${ui.softChip}`}
-            >
-              Portofolio Sains Data & Pengembangan Web
-            </div>
+        <section id="about" className="about-section"><div className="container about-grid"><div><SectionLabel number="02">SEDIKIT TENTANG SAYA</SectionLabel><h2>Pikiran analitis.<br /><em>Jiwa eksploratif.</em></h2><div className="about-signature">Ilham Akbar Jamil <span>↗</span></div></div><div className="about-copy"><p className="about-lead">Saya senang menemukan pola di balik kompleksitas — lalu mengubahnya menjadi sesuatu yang berguna.</p><p>Fokus saya ada pada Sains Data dan Pengembangan Web. Saya menggabungkan analisis data, machine learning, dan NLP dengan antarmuka yang intuitif untuk menjembatani persoalan teknis dan kebutuhan nyata.</p><p>Bagi saya, solusi yang baik dimulai dari rasa ingin tahu, dibangun dengan proses yang terstruktur, dan disampaikan dengan sederhana.</p><div className="about-values"><span><Database size={18} /> Berbasis data</span><span><Code2 size={18} /> Dibuat dengan teliti</span></div></div></div></section>
 
-            <h1 className="max-w-4xl text-5xl font-semibold tracking-[-0.06em] md:text-7xl lg:text-8xl">
-              Ilham Akbar Jamil
-            </h1>
+        <section id="skills" className="container section"><SectionLabel number="03">KEAHLIAN & PERANGKAT</SectionLabel><div className="section-heading"><h2>Alat yang tepat.<br /><em>Kemungkinan tanpa batas.</em></h2><p>Dari eksplorasi data hingga antarmuka,<br className="desktop-break" /> inilah perangkat di balik proses saya.</p></div><div className="skills-grid">{skills.map(({ title, subtitle, icon: Icon, items }, index) => <article className={`skill-card skill-card-${index}`} key={title}><div className="skill-top"><Icon size={26} strokeWidth={1.5} /><span>0{index + 1}</span></div><h3>{title}</h3><p>{subtitle}</p><div className="skill-tags">{items.map((item) => <span key={item}>{item}</span>)}</div></article>)}</div></section>
 
-            <p className={`mt-7 max-w-2xl text-lg leading-8 md:text-xl ${ui.textMuted}`}>
-              Saya membangun produk digital yang rapi dan solusi berbasis data
-              dengan menggabungkan machine learning, analitik, dan teknologi web
-              modern.
-            </p>
+        <section id="github" className="container section github-section"><div className="github-heading"><div><SectionLabel number="04">CATATAN DARI GITHUB</SectionLabel><h2>Terus belajar.<br /><em>Terus membangun.</em></h2></div><p>Eksperimen, ide, dan pekerjaan terbaru<br className="desktop-break" /> dari repositori publik saya.</p></div><div aria-live="polite" aria-busy={repoState === "loading"}>{repoState === "loading" ? <div className="repo-empty"><FolderGit2 size={28} /><p>Memuat eksplorasi terbaru…</p></div> : repos.length === 0 ? <div className="repo-empty"><div className="repo-empty-icon"><FolderGit2 size={28} /></div><div><h3>Eksplorasi terus berlanjut.</h3><p>Repositori belum dapat ditampilkan. Sementara itu, jelajahi karya pilihan di atas.</p></div>{repoState === "error" && <button className="text-link" onClick={() => { setRepoState("loading"); setRetry((value) => value + 1); }}>Coba lagi <ArrowRight size={16} /></button>}</div> : <div className="repo-grid">{repos.map((repo) => <a key={repo.id} className="repo-card" href={repo.url} target="_blank" rel="noreferrer"><div className="repo-top"><FolderGit2 size={21} /><ArrowUpRight size={18} /></div><h3>{repo.name}</h3><p>{repo.description || "Eksplorasi kode dan pengembangan proyek."}</p><div className="repo-meta">{repo.language && <span className="repo-language">{repo.language}</span>}<span><Star size={13} />{repo.stars}</span><span><GitFork size={13} />{repo.forks}</span></div><small>Diperbarui {formatDate(repo.updatedAt)}</small></a>)}</div>}</div></section>
 
-            <div className="mt-9 flex flex-col gap-3 sm:flex-row">
-              <a
-                href="#projects"
-                className={`inline-flex items-center justify-center gap-2 rounded-full px-6 py-3 text-sm font-semibold transition ${ui.primaryButton}`}
-              >
-                Lihat Proyek
-                <ArrowUpRight size={17} />
-              </a>
-
-              <a
-                href="#github"
-                className={`inline-flex items-center justify-center gap-2 rounded-full border px-6 py-3 text-sm font-semibold transition ${ui.secondaryButton}`}
-              >
-                <Code2 size={17} />
-                Repositori GitHub
-              </a>
-            </div>
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, scale: 0.94 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.9, delay: 0.15 }}
-            className="relative"
-          >
-            <div
-              className={`relative mx-auto aspect-[4/5] max-w-sm overflow-hidden rounded-[2.5rem] border p-4 shadow-2xl ${ui.deviceOuter}`}
-            >
-              <div className={`h-full rounded-[2rem] border p-5 ${ui.deviceInner}`}>
-                <div className="mb-6 flex items-center justify-between">
-                  <div className="flex gap-2">
-                    <span className={`h-3 w-3 rounded-full ${ui.dot1}`} />
-                    <span className={`h-3 w-3 rounded-full ${ui.dot2}`} />
-                    <span className={`h-3 w-3 rounded-full ${ui.dot3}`} />
-                  </div>
-                  <span className={`text-xs ${ui.textVerySoft}`}>portfolioOS</span>
-                </div>
-
-                <div className="space-y-4">
-                  <div className={`rounded-3xl border p-5 ${ui.softPanel}`}>
-                    <Database className={ui.textMuted} size={26} />
-                    <p className={`mt-5 text-sm ${ui.textSoft}`}>Fokus Utama</p>
-                    <h3 className="mt-1 text-2xl font-semibold tracking-tight">
-                      Sains Data
-                    </h3>
-                  </div>
-
-                  <div className={`rounded-3xl border p-5 ${ui.softPanel}`}>
-                    <Code2 className={ui.textMuted} size={26} />
-                    <p className={`mt-5 text-sm ${ui.textSoft}`}>Pengembangan</p>
-                    <h3 className="mt-1 text-2xl font-semibold tracking-tight">
-                      Web Modern
-                    </h3>
-                  </div>
-
-                  <div className={`rounded-3xl border p-5 ${ui.softPanel}`}>
-                    <Brain className={ui.textMuted} size={26} />
-                    <p className={`mt-5 text-sm ${ui.textSoft}`}>Pendekatan</p>
-                    <h3 className="mt-1 text-2xl font-semibold tracking-tight">
-                      Rapi & Analitis
-                    </h3>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </motion.div>
-        </div>
-      </section>
-
-      <section id="about" className="relative z-10 mx-auto max-w-7xl px-5 py-24 md:px-8">
-        <SectionLabel theme={theme}>Tentang</SectionLabel>
-
-        <div className="grid gap-10 lg:grid-cols-[0.9fr_1.1fr]">
-          <h2 className="text-4xl font-semibold tracking-[-0.04em] md:text-6xl">
-            Antarmuka minimal. Arah teknis yang kuat.
-          </h2>
-
-          <div className={`space-y-6 text-lg leading-8 ${ui.textMuted}`}>
-            <p>
-              Saya berfokus membangun solusi praktis di bidang Sains Data dan
-              Pengembangan Web. Pekerjaan saya menggabungkan analisis data,
-              machine learning, NLP, dan pengembangan antarmuka yang rapi untuk
-              menciptakan produk yang berguna, terstruktur, dan mudah dipahami.
-            </p>
-            <p>
-              Portofolio ini dirancang untuk menampilkan proyek pilihan secara
-              profesional: tidak ramai, tidak berlebihan, dan berfokus pada
-              kejelasan, eksekusi, serta nilai teknis.
-            </p>
-          </div>
-        </div>
-      </section>
-
-      <section id="projects" className="relative z-10 mx-auto max-w-7xl px-5 py-24 md:px-8">
-        <SectionLabel theme={theme}>Proyek Unggulan</SectionLabel>
-
-        <div className="mb-12 flex flex-col justify-between gap-5 md:flex-row md:items-end">
-          <h2 className="max-w-2xl text-4xl font-semibold tracking-[-0.04em] md:text-6xl">
-            Karya pilihan di bidang data dan web.
-          </h2>
-          <p className={`max-w-md ${ui.textMuted}`}>
-            Kumpulan proyek terkurasi yang menunjukkan arah teknis, pemecahan
-            masalah, dan kualitas implementasi.
-          </p>
-        </div>
-
-        <div className="grid gap-5 md:grid-cols-2">
-          {featuredProjects.map((project, index) => (
-            <motion.article
-              key={project.title}
-              initial={{ opacity: 0, y: 24 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-80px" }}
-              transition={{ duration: 0.55, delay: index * 0.05 }}
-              className={`group rounded-[2rem] border p-6 transition ${ui.panel} ${ui.panelHover}`}
-            >
-              <div className="mb-7 flex items-center justify-between gap-4">
-                <span className={`rounded-full border px-3 py-1 text-xs ${ui.tinyChip}`}>
-                  {project.category}
-                </span>
-                <span className={`rounded-full px-3 py-1 text-xs font-medium ${ui.statusChip}`}>
-                  {project.status}
-                </span>
-              </div>
-
-              <h3 className="text-2xl font-semibold tracking-tight">
-                {project.title}
-              </h3>
-
-              <p className={`mt-4 leading-7 ${ui.textMuted}`}>
-                {project.description}
-              </p>
-
-              <div className="mt-5 flex flex-wrap gap-2">
-                {project.techStack.map((tech) => (
-                  <span
-                    key={tech}
-                    className={`rounded-full px-3 py-1 text-xs ${ui.skillChip}`}
-                  >
-                    {tech}
-                  </span>
-                ))}
-              </div>
-
-              <ul className={`mt-6 space-y-2 text-sm ${ui.textSoft}`}>
-                {project.highlights.map((item) => (
-                  <li key={item}>— {item}</li>
-                ))}
-              </ul>
-
-              <div className="mt-7 flex gap-3">
-                <a
-                  href={project.githubUrl}
-                  target="_blank"
-                  rel="noreferrer"
-                  className={`inline-flex items-center gap-2 rounded-full border px-4 py-2 text-sm transition ${ui.secondaryButton}`}
-                >
-                  <Code2 size={16} />
-                  GitHub
-                </a>
-
-                {project.liveUrl && (
-                  <a
-                    href={project.liveUrl}
-                    target="_blank"
-                    rel="noreferrer"
-                    className={`inline-flex items-center gap-2 rounded-full border px-4 py-2 text-sm transition ${ui.secondaryButton}`}
-                  >
-                    <ExternalLink size={16} />
-                    Demo
-                  </a>
-                )}
-              </div>
-            </motion.article>
-          ))}
-        </div>
-      </section>
-
-      <section id="github" className="relative z-10 mx-auto max-w-7xl px-5 py-24 md:px-8">
-        <SectionLabel theme={theme}>GitHub</SectionLabel>
-
-        <div className="mb-12 flex flex-col justify-between gap-5 md:flex-row md:items-end">
-          <h2 className="max-w-2xl text-4xl font-semibold tracking-[-0.04em] md:text-6xl">
-            Repositori publik terbaru.
-          </h2>
-          <p className={`max-w-md ${ui.textMuted}`}>
-            Bagian ini terhubung langsung ke akun GitHub dan menampilkan
-            repositori publik yang baru diperbarui.
-          </p>
-        </div>
-
-        {isLoadingRepos ? (
-          <div className={`rounded-[2rem] border p-8 ${ui.panel} ${ui.textSoft}`}>
-            Memuat repositori GitHub...
-          </div>
-        ) : repos.length === 0 ? (
-          <div className={`rounded-[2rem] border p-8 ${ui.panel} ${ui.textSoft}`}>
-            Repositori GitHub belum tersedia. Periksa{" "}
-            <span className="font-medium">GITHUB_USERNAME</span> di dalam{" "}
-            <span className="font-medium">.env.local</span>.
-          </div>
-        ) : (
-          <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
-            {repos.map((repo, index) => (
-              <motion.a
-                key={repo.id}
-                href={repo.url}
-                target="_blank"
-                rel="noreferrer"
-                initial={{ opacity: 0, y: 18 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: "-80px" }}
-                transition={{ duration: 0.45, delay: index * 0.04 }}
-                className={`group rounded-[2rem] border p-6 transition ${ui.panel} ${ui.panelHover}`}
-              >
-                <div className="mb-5 flex items-start justify-between gap-4">
-                  <Code2 className={ui.textMuted} size={22} />
-                  <ArrowUpRight className={`${ui.textVerySoft} transition`} size={20} />
-                </div>
-
-                <h3 className="text-xl font-semibold tracking-tight">
-                  {repo.name}
-                </h3>
-
-                <p className={`mt-3 line-clamp-3 min-h-[4.5rem] text-sm leading-6 ${ui.textSoft}`}>
-                  {repo.description || "Belum ada deskripsi."}
-                </p>
-
-                <div className={`mt-6 flex flex-wrap gap-3 text-xs ${ui.textSoft}`}>
-                  {repo.language && <span>{repo.language}</span>}
-                  <span className="inline-flex items-center gap-1">
-                    <Star size={13} />
-                    {repo.stars}
-                  </span>
-                  <span className="inline-flex items-center gap-1">
-                    <GitFork size={13} />
-                    {repo.forks}
-                  </span>
-                </div>
-
-                <div className={`mt-4 flex items-center gap-2 text-xs ${ui.textVerySoft}`}>
-                  <CalendarDays size={13} />
-                  Diperbarui {formatDate(repo.updatedAt)}
-                </div>
-              </motion.a>
-            ))}
-          </div>
-        )}
-      </section>
-
-      <section id="skills" className="relative z-10 mx-auto max-w-7xl px-5 py-24 md:px-8">
-        <SectionLabel theme={theme}>Keahlian</SectionLabel>
-
-        <div className="mb-12">
-          <h2 className="max-w-3xl text-4xl font-semibold tracking-[-0.04em] md:text-6xl">
-            Stack teknis dengan fokus praktis.
-          </h2>
-        </div>
-
-        <div className="grid gap-5 md:grid-cols-3">
-          {Object.entries(skills).map(([group, items]) => (
-            <div key={group} className={`rounded-[2rem] border p-6 ${ui.panel}`}>
-              <h3 className="mb-5 text-xl font-semibold">{group}</h3>
-              <div className="flex flex-wrap gap-2">
-                {items.map((skill) => (
-                  <span
-                    key={skill}
-                    className={`rounded-full px-3 py-2 text-sm ${ui.skillChip}`}
-                  >
-                    {skill}
-                  </span>
-                ))}
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      <section id="contact" className="relative z-10 mx-auto max-w-7xl px-5 py-24 md:px-8">
-        <div className={`rounded-[2.5rem] border p-8 md:p-12 ${ui.softPanel}`}>
-          <SectionLabel theme={theme}>Kontak</SectionLabel>
-
-          <div className="grid gap-10 lg:grid-cols-[1fr_0.8fr]">
-            <div>
-              <h2 className="max-w-3xl text-4xl font-semibold tracking-[-0.04em] md:text-6xl">
-                Mari bangun sesuatu yang rapi dan berguna.
-              </h2>
-              <p className={`mt-6 max-w-2xl text-lg leading-8 ${ui.textMuted}`}>
-                Terbuka untuk kolaborasi, diskusi proyek, dan peluang yang
-                berkaitan dengan sains data, machine learning, serta
-                pengembangan web modern.
-              </p>
-            </div>
-
-            <div className="flex flex-col justify-end gap-3">
-              <a
-                href="mailto:your.email@example.com"
-                className={`inline-flex items-center justify-between rounded-full border px-5 py-4 transition ${ui.secondaryButton}`}
-              >
-                <span className="inline-flex items-center gap-3">
-                  <Mail size={18} />
-                  Email
-                </span>
-                <ArrowUpRight size={18} />
-              </a>
-
-              <a
-                href="https://github.com/"
-                target="_blank"
-                rel="noreferrer"
-                className={`inline-flex items-center justify-between rounded-full border px-5 py-4 transition ${ui.secondaryButton}`}
-              >
-                <span className="inline-flex items-center gap-3">
-                  <Code2 size={18} />
-                  GitHub
-                </span>
-                <ArrowUpRight size={18} />
-              </a>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <footer className={`relative z-10 border-t px-5 py-8 text-center text-sm md:px-8 ${ui.footer}`}>
-        © {new Date().getFullYear()} Ilham Akbar Jamil. Dibuat dengan Next.js.
-      </footer>
-    </main>
+        <section id="contact" className="contact-section"><div className="container contact-inner"><div className="contact-kicker"><span className="availability-dot" /> SEBUAH IDE BISA JADI AWAL YANG BAIK</div><div className="contact-row"><h2>Ada ide menarik?<br /><em>Mari kita wujudkan.</em></h2><a className="contact-arrow" href="mailto:your.email@example.com" aria-label="Hubungi Ilham melalui email"><ArrowUpRight size={48} strokeWidth={1.3} /></a></div><div className="contact-bottom"><p>Terbuka untuk kolaborasi, diskusi proyek,<br />dan kesempatan untuk tumbuh bersama.</p><div><a href="mailto:your.email@example.com"><Mail size={17} /> Kirim email <ArrowUpRight size={16} /></a><a href="https://github.com/" target="_blank" rel="noreferrer"><FolderGit2 size={17} /> GitHub <ArrowUpRight size={16} /></a></div></div><span className="contact-decoration" aria-hidden="true">✳</span></div></section>
+      </main>
+      <footer className="container site-footer"><a className="wordmark" href="#home">ilham<span>✳</span></a><p>© {new Date().getFullYear()} Ilham Akbar Jamil</p><a className="back-top" href="#home">Kembali ke atas <ArrowUp size={15} /></a></footer>
+    </>
   );
 }
